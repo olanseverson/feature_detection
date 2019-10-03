@@ -8,7 +8,6 @@ https://pysource.com/2018/03/23/feature-matching-brute-force-opencv-3-4-with-pyt
 https://www.life2coding.com/resize-opencv-window-according-screen-resolution/
 """
 
-
 import cv2
 import numpy as np
 import time 
