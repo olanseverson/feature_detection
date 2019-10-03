@@ -94,10 +94,6 @@ while True:
         list_img[idx]['foundImg'] = frame
         logger.info("frame %d is found at idx %d", idx, temp['foundIdx'])
         idx = idx + 1
-        
-        
-#        max_match = len(matches)
-#        found_frame = frame
     
     #matching_result = cv2.drawMatches(img1, kp1, img2, kp2, matches[:100], None, flags=2) # draw matching comparison
     if cv2.waitKey(1) & 0xFF == ord('q'):
