@@ -13,7 +13,8 @@ https://arxiv.org/pdf/1710.02726.pdf
 import cv2
 import logging
 #%% Initiate logger for DEBUGGING
-logging.basicConfig(level = logging.WARNING,format='[%(levelname)s] => (%(name)s||%(threadName)-s):  %(message)s')
+logging.basicConfig(level = logging.WARNING,
+                    format='[%(levelname)s] => (%(name)s||%(threadName)-s):  %(message)s')
 # logging.root.setLevel(logging.WARNING)
 FORMATTER = logging.Formatter("[%(levelname)s] => (%(name)s||%(threadName)-s):  %(message)s")
 c_handler = logging.StreamHandler() # handler
@@ -28,7 +29,7 @@ SKIPPED_NUM = 3 #skip reading the frame every Skipped_num frame
 
 ## GET THE IMAGE 
 list_img = []
-th_dict = {'n_match': [100,280,170,130,240,120,250,150,180,100,200,210,170], #[180,280,170,130,240,120,250,150,180,100,200,210,170],
+th_dict = {'n_match': [100,280,170,130,200,120,250,150,180,100,200,210,170], #[180,280,170,130,240,120,250,150,180,100,200,210,170],
                   'distance': [35,35,30,35,20,35,35,35,40,20,35,35,30]}
 print(th_dict['distance'][0])
 for i in range (1,MAX_CTRL_FRAME + 1):
@@ -45,10 +46,17 @@ matches_list = []
 max_match = 0
 
 ## GET THE VIDEO
-cap = cv2.VideoCapture('ori.mp4') # read Video that we want to check
-logger.info('frame count: %d', cap.get(cv2.CAP_PROP_FRAME_COUNT))
-logger.info('fps : %d', cap.get(cv2.CAP_PROP_FPS))
-
+try:
+    cap = cv2.VideoCapture('tet.mp4') # read Video that we want to check
+    if not cap.isOpened():
+        raise NameError("can not open")
+except cv2.error as e:
+    print("cv2.error:", e)
+except Exception as e:
+    logger.error("Exception: %s",  e)
+else:
+    logger.info('frame count: %d', cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    logger.info('fps : %d', cap.get(cv2.CAP_PROP_FPS))
 idx = 0
 while True:
     _, frame = cap.read()
@@ -87,28 +95,29 @@ while True:
         break
     if (idx>=MAX_CTRL_FRAME):
         break
-    cap.set(cv2.CAP_PROP_POS_FRAMES, cap.get(cv2.CAP_PROP_POS_FRAMES)+SKIPPED_NUM) # skip every SKIPPED_NUM frames
+    cap.set(cv2.CAP_PROP_POS_FRAMES,
+            cap.get(cv2.CAP_PROP_POS_FRAMES)+SKIPPED_NUM) # skip every SKIPPED_NUM frames
     #end while
     
-cv2.destroyWindow('app')
+#cv2.destroyWindow('app')
 
 ## SHOW FRAME
-for img in list_img:
-    
-    cv2.namedWindow('CONTROL IMG', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('CONTROL IMG', 500,700)
-    cv2.moveWindow('CONTROL IMG', 0,0) 
-    cv2.imshow('CONTROL IMG', img['img'])
-    
-    if (img['isFound'] == True):
-        
-        cv2.namedWindow('FOUND', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('FOUND', 500,700)
-        cv2.moveWindow('FOUND', 600,0) 
-        cv2.imshow('FOUND', img['foundImg'])
-        
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+#for img in list_img:
+#    
+#    cv2.namedWindow('CONTROL IMG', cv2.WINDOW_NORMAL)
+#    cv2.resizeWindow('CONTROL IMG', 500,700)
+#    cv2.moveWindow('CONTROL IMG', 0,0) 
+#    cv2.imshow('CONTROL IMG', img['img'])
+#    
+#    if (img['isFound'] == True):
+#        
+#        cv2.namedWindow('FOUND', cv2.WINDOW_NORMAL)
+#        cv2.resizeWindow('FOUND', 500,700)
+#        cv2.moveWindow('FOUND', 600,0) 
+#        cv2.imshow('FOUND', img['foundImg'])
+#        
+#    cv2.waitKey(0)
+#    cv2.destroyAllWindows()
 
 def drawing_feature(img1, img2):
     # ORB Detector
@@ -141,4 +150,3 @@ def drawing_feature(img1, img2):
 #drawing_feature(list_img[0]['img'], img2)
 
 cap.release
-
